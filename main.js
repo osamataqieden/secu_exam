@@ -11,7 +11,6 @@ function appReady(){
     });
     window.loadFile('mainApp.html');
     window.removeMenu();
-    window.webContents.openDevTools();
 };
 
 app.whenReady().then(appReady).catch(() => {console.log("catastrophic faliure")});

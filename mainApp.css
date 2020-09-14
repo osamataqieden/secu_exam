@@ -3,10 +3,31 @@
 }
 #mainPageContainer {
     display: none;
-    margin: 0 !important;
-    padding: 0 !important;
     width: 100%;
 }
 #rowMainPage {
     height: 100vh;
 }
+
+#navbar{
+    text-align: center;
+    padding:0;
+    background-color: rgb(126, 38, 118);
+}
+
+.sign-in-buttons{
+    background-color: rgb(126, 38, 118);
+}
+
+.sign-in-buttons:hover{
+    background-color: rgb(90, 20, 84);
+}
+
+.navButtons:hover{
+    background-color: rgb(90, 20, 84);
+}
+
+.form-control:focus {
+    border-color: rgb(126, 38, 118);
+    box-shadow: 0 0 0 0.2rem rgba(90, 20, 84,1);
+} 

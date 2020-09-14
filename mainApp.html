@@ -26,7 +26,7 @@
                     <label for="userPassword">Password</label>
                     <input type="password" class="form-control" id="userPassword" required>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-lg btn-block">Login</button>
+                    <button type="submit" class="btn btn-lg btn-block sign-in-buttons text-light">Login</button>
                 </form>
             </div>
             <a class="form-text text-muted mt-2 ml-4" id="sign-up-button">Or Press Here to Sign Up</a>
@@ -67,21 +67,43 @@
                             Student Account
                         </label>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-lg btn-block">Sign Up</button>
+                    <button type="submit" class="btn btn-lg btn-block sign-in-buttons text-light">Sign Up</button>
                 </form>
             </div>
         </div>
-        <div id="mainPageContainer" class="container-fluid m-0 p-0">
+        <div id="mainPageContainer" class="container-fluid">
             <div class="row" id="rowMainPage">
-                <nav class="nav flex-column col-3 bg-primary">
-                    <p class="text-light">Teacher Teacher</p>
-                    <p class="text-light">Teacher@Teacher.Teacher</p>
-                    <p class="text-light">Teacher School/University</p>
-                </div>
-                <div class="col-9 bg-light">
-
-                </div>
-            </div>
+                <nav class="nav flex-column col-1 text-light" id="navbar">
+                    <button class="nav-item btn text-light navButtons" onclick="alert('Here')">
+                        <svg width="4em" height="1em" viewBox="0 0 16 16" class="bi bi-plus" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                        </svg>
+                        <br>
+                        <small>
+                            New Exam.
+                        </small>
+                    </button>
+                    <button class="nav-item mt-1 btn text-light navButtons" onclick="alert('here')">
+                        <svg width="4em" height="1em" viewBox="0 0 16 16" class="bi bi-sliders" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M11.5 2a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM9.05 3a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0V3h9.05zM4.5 7a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM2.05 8a2.5 2.5 0 0 1 4.9 0H16v1H6.95a2.5 2.5 0 0 1-4.9 0H0V8h2.05zm9.45 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm-2.45 1a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0v-1h9.05z"/>
+                        </svg>
+                        <br>
+                        <small>
+                            Settings
+                        </small>
+                    </button>
+                    <button class="btn text-light navButtons nav-item">
+                        <svg width="4em" height="1em" viewBox="0 0 16 16" class="bi bi-info" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8.93 6.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588z"/>
+                            <circle cx="8" cy="4.5" r="1"/>
+                        </svg>
+                        <br>
+                        <small>
+                            About
+                        </small>
+                    </button>
+                </nav>
+                <div class="col-11 bg-light"></div>
         </div>
     </body>
 </html>
