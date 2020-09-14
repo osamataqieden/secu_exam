@@ -1,0 +1,23 @@
+{
+  "name": "secu_exam",
+  "version": "1.0.0",
+  "description": "2020 Amazon Techathon submission, this allows teachers to conduct cheat-proof online exams",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/osamataqieden/secu_exam.git"
+  },
+  "author": "Team SecuExam",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/osamataqieden/secu_exam/issues"
+  },
+  "homepage": "https://github.com/osamataqieden/secu_exam#readme",
+  "devDependencies": {
+    "electron": "^10.1.1"
+  }
+}
