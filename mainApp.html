@@ -6,7 +6,8 @@
         <link rel="stylesheet" href="mainApp.css">
         <script src="lib/js/jquery-3.5.1.slim.min.js"></script>
         <script src="lib/js/popper.min.js"></script>
-        <script src="lib/js/bootstrap.js"defer></script>
+        <script defer src="lib/js/bootstrap.js"></script>
+        <script src="https://unpkg.com/uuid@latest/dist/umd/uuidv4.min.js"></script>
         <script src="mainApp.js" async defer></script>
         <!-- The core Firebase JS SDK is always required and must be listed first -->
         <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-app.js"></script>
@@ -14,15 +15,16 @@
         <!-- TODO: Add SDKs for Firebase products that you want to use
             https://firebase.google.com/docs/web/setup#available-libraries -->
         <script defer src="https://www.gstatic.com/firebasejs/7.20.0/firebase-auth.js"></script>
+        <script defer src="https://www.gstatic.com/firebasejs/7.20.0/firebase-database.js"></script>
         <script>
              var firebaseConfig = {
-            apiKey: "AIzaSyComOpvSJtnXcBkcNIPdnXy8HY3DGsfUlw",
-            authDomain: "secuexam.firebaseapp.com",
-            databaseURL: "https://secuexam.firebaseio.com",
-            projectId: "secuexam",
-            storageBucket: "secuexam.appspot.com",
-            messagingSenderId: "547967237496",
-             appId: "1:547967237496:web:b8938a4778c217ec35dc8d"
+                apiKey: "AIzaSyComOpvSJtnXcBkcNIPdnXy8HY3DGsfUlw",
+                authDomain: "secuexam.firebaseapp.com",
+                databaseURL: "https://secuexam.firebaseio.com",
+                projectId: "secuexam",
+                storageBucket: "secuexam.appspot.com",
+                messagingSenderId: "547967237496",
+                appId: "1:547967237496:web:b8938a4778c217ec35dc8d"
             };
             // Initialize Firebase
             firebase.initializeApp(firebaseConfig);
@@ -68,11 +70,12 @@
                     <div class="form-group">
                         <label for="userEmail1">Email address</label>
                         <input type="email" class="form-control" id="userEmail1" aria-describedby="emailHelp" required>
-                        <small id="emailHelp" class="form-text text-muted">You will be asked to verify this email</small>
+                        <small id="emailHelp" class="form-text text-muted"></small>
                     </div>
                     <div class="form-group">
                         <label for="userPassword1">Password</label>
                         <input type="password" class="form-control" id="userPassword1" required minlength="6">
+                        <small class="form-text text-muted">Password has to be atleast 6 characters in length</small>
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" name="accountTypeRadios" type="radio" value="" id="teacherRadio" required> 
@@ -108,8 +111,7 @@
                             <path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
                         </svg>
                         <br>
-                        <small>
-                            New Exam.
+                        <small id="smallButton">
                         </small>
                     </button>
                     <button class="nav-item mt-1 btn text-light navButtons" id="settingsButton">

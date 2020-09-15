@@ -1,3 +1,5 @@
+let database;
+let currentUser;
 function showSignUpForm(){
     UIHelper.showSignUpForm();
 }
@@ -6,10 +8,11 @@ function submitLogInForm(){
     let email = document.getElementById("userEmail").value;
     let password = document.getElementById("userPassword").value;
     firebase.auth().signInWithEmailAndPassword(email,password).then(() => {
-        
-        UIHelper.hideAuthScreen();
-        //let exams = null;
-        //UIHelper.showTeacherFirstScreen(exams);
+        database.ref('/users/' + firebase.auth().currentUser.uid).once("value").then((snapshot) => {
+            currentUser = snapshot;
+            UIHelper.hideAuthScreen();
+            UIHelper.showFirstScreen();
+        });
     }).catch((err) => {
         alert("Error signing in " + err);
     });
@@ -19,23 +22,81 @@ function submitSignUpForm(){
     let email = document.getElementById("userEmail1").value;
     let password = document.getElementById("userPassword1").value;
     firebase.auth().createUserWithEmailAndPassword(email,password).then(() => {
-        alert("done");
+        let uid = firebase.auth().currentUser.uid;
+        let firstName = document.getElementById("firstName").value;
+        let lastName = document.getElementById("lastName").value;
+        let school = document.getElementById("userSchool").value;
+        let accountType;
+        if(document.getElementById("teacherRadio").checked)
+            accountType = "teacher";
+        else accountType = "student";
+        database.ref('users/' + uid).set({
+            firstName: firstName,
+            lastName: lastName,
+            school: school,
+            email: email,
+            uid: uid,
+            accountType: accountType,
+            examIDs: null,
+        });
+        database.ref('/users/' + firebase.auth().currentUser.uid).once("value").then((snapshot) => {
+            currentUser = snapshot;
+            UIHelper.hideAuthScreen();
+            UIHelper.showFirstScreen();
+        });
     })
     .catch((err) => {
-        alert("Error signing up " + err);
+        alert("Sign Up error " + err);
+        document.getElementById("emailHelp").innerText = "Email already in use, please try again";
     })
-    //UIHelper.hideAuthScreen();
-    //let exams = null;
-    //UIHelper.showTeacherFirstScreen(exams);
 }
 
-function submitExamSettings(){
+async function submitExamSettings(){
+    let examUUID = uuidv4();
+    let examQuestionsUUID = uuidv4();
+    let courseName = document.getElementById("courseName").value;
+    let examTitle = document.getElementById("examTitle").value;
+    let duration = document.getElementById("duration").value;
+    let date = document.getElementById("date").value;
+    let timeOfDay = document.getElementById("timeOfDay").value;
+    let desc = document.getElementById("description").value;
     let numQuestions = document.getElementById("examNumQuestions").value;
-    UIHelper.displayQuestionFields(numQuestions);
+    let policyMinimization = document.getElementById("policyMinimization").checked;
+    let policyScreenSize = document.getElementById("policyScreenSize").checked;
+    let policyObjectDetection = document.getElementById("policyObjectDetection").checked;
+    let policyHeadPoseDetection = document.getElementById("policyHeadPoseDetection").checked;
+    let policyPeopleDetection = document.getElementById("policyPeopleDetection").checked;
+    let policyAudioDetection = document.getElementById("policyAudioDetection").checked;
+    let policyAutomaticFailure = document.getElementById("policyAutomaticFailure").checked;
+    let thresholdNumber = document.getElementById("thresholdNumber").value;
+    let exam = {
+        uuid: examUUID, 
+        questionsUUID: examQuestionsUUID,
+        courseName: courseName,
+        examTitle: examTitle,
+        duration: duration,
+        date: date,
+        timeOfDay: timeOfDay,
+        description: desc,
+        policies: {
+            minimization: policyMinimization,
+            screenSize: policyScreenSize,
+            objectDetection: policyObjectDetection,
+            headPoseDetection: policyHeadPoseDetection,
+            peopleDetection: policyPeopleDetection,
+            audioDetection: policyAudioDetection,
+            automaticFailure: policyAutomaticFailure,
+            threshold: thresholdNumber
+        }
+    };
+    database.ref("/users/" + firebase.auth().currentUser.uid + "/examIDs/").push(examUUID);
+    database.ref("/exams/" + examUUID).set(exam);
+    UIHelper.displayQuestionFields(numQuestions, examQuestionsUUID);
 }
 
-function addExam(){
-    UIHelper.showHome();
+function addExam(numQuestions, questionUUID){
+    
+    UIHelper.showFirstScreen();
 }
 
 function onStartup(){
@@ -44,6 +105,7 @@ function onStartup(){
     document.getElementById("formSignIn").addEventListener("submit", submitLogInForm);
     document.getElementById("examSettings").addEventListener("submit", submitExamSettings);
     document.getElementById("examQuestions").addEventListener("submit" , submitSignUpForm);
+    database = firebase.database();
 }
 
 window.addEventListener("load", onStartup);
@@ -51,10 +113,11 @@ window.addEventListener("load", onStartup);
 //Main UI renderer is inside the function UIHelper.
 const UIHelper = (() => {
     let first = true;
-    const TEXT_NO_EXAMS_1 = "You don't seem to have any exams scheduled";
-    const TEXT_NO_EXAMS_2 = "Press the 'Add Exam' button to the left to schedule a new exam!";
-    const QUESTION_INPUT_TEXT = 'Please enter the question text for question #';
-    const TEXT_MCQ = "Below are answers for multiple choice questions, please ignore them if this question is not an MCQ";
+    let TEXT_NO_EXAMS_1;
+    let TEXT_NO_EXAMS_2;
+    let BUTTON_TEXT;
+    let QUESTION_INPUT_TEXT = 'Please enter the question text for question #';
+    let TEXT_MCQ = "Below are answers for multiple choice questions, please ignore them if this question is not an MCQ";
     const showSignUpForm = () => {
         document.getElementById("signInForm").style.display = 'none';
         document.getElementById("sign-up-button").style.display = 'none';
@@ -68,15 +131,31 @@ const UIHelper = (() => {
     const hideAuthScreen = () => {
         document.getElementById("firstScreenContiner").style.display = 'none';
     }
-    const showTeacherFirstScreen = (Exams) => {
+    const showJoinExamForm = () => {
+        alert("HELLO");
+    }
+    const showFirstScreen = () => {
         document.getElementById("mainPageContainer").style.display = "block";
-        document.getElementById("homeButton").addEventListener("click" , showHome);
-        document.getElementById("newExamButton").addEventListener("click", showNewExamForm);
-        document.getElementById("settingsButton").addEventListener("click",showSettings);
+        document.getElementById("homeButton").addEventListener("click", showHome);
+        document.getElementById("settingsButton").addEventListener("click", showSettings);
         document.getElementById("aboutButton").addEventListener("click", showAbout);
         let examViewer = document.getElementById("examViewer");
-        if(Exams === null){
-            if(!first) 
+        let Exams = currentUser.examIDs;
+        if(currentUser.accountType === "student"){
+            TEXT_NO_EXAMS_1 = "You don't seem to have any exams scheduled";
+            TEXT_NO_EXAMS_2 = "You can join an exam by clicking the 'Join Exam' button";
+            BUTTON_TEXT = "Join Exam";
+            document.getElementById("newExamButton").addEventListener("click", showJoinExamForm);
+        }
+        else {
+            TEXT_NO_EXAMS_1 = "You don't seem to have any exams scheduled";
+            TEXT_NO_EXAMS_2 = "You can join an exam by clicking the 'Create Exam' button";
+            BUTTON_TEXT = "Create Exam";
+            document.getElementById("newExamButton").addEventListener("click", showNewExamForm);
+        }
+        document.getElementById("smallButton").innerText = BUTTON_TEXT;
+        if (typeof Exams !== "object") {
+            if (!first)
                 return;
             let Jumbotron = document.createElement("div");
             Jumbotron.classList.add("jumbotron");
@@ -92,6 +171,7 @@ const UIHelper = (() => {
             examViewer.append(Jumbotron);
         }
         else {
+            examViewer.innerHTML = "";
             let layoutGrid = document.createElement("div");
             layoutGrid.classList.add("row");
             layoutGrid.classList.add("row-cols-3");
@@ -162,6 +242,7 @@ const UIHelper = (() => {
         let input = document.createElement("input");
         input.setAttribute("type" , "text");
         input.setAttribute("disabled" , "true");
+        input.setAttribute("required" , "true");
         input.classList.add("form-control");
         input.id = "answer1" + id;
         let secondAnswerGroup = document.createElement("div");
@@ -173,6 +254,7 @@ const UIHelper = (() => {
         let input2 = document.createElement("input");
         input2.setAttribute("type" , "text");
         input2.classList.add("form-control");
+        input2.setAttribute("disabled" , "true");
         input2.setAttribute("disabled" , "true");
         input2.id = "answer2" + id;
         firstAnswerGroup.append(label);
@@ -194,6 +276,7 @@ const UIHelper = (() => {
         input3.setAttribute("type" , "text");
         input3.classList.add("form-control");
         input3.setAttribute("disabled" , "true");
+        input3.setAttribute("required" , "true");
         input3.id = "answer3" + id;
         let forthAnswerGroup = document.createElement("div");
         forthAnswerGroup.classList.add("form-group");
@@ -205,6 +288,7 @@ const UIHelper = (() => {
         input4.setAttribute("type" , "text");
         input4.classList.add("form-control");
         input4.setAttribute("disabled" , "true");
+        input4.setAttribute("required" , "true");
         input4.id = "answer4" + id; 
         thirdAnswerGroup.append(label3);
         thirdAnswerGroup.append(input3);
@@ -226,6 +310,7 @@ const UIHelper = (() => {
         label.innerHTML = QUESTION_INPUT_TEXT + (id + 1);
         questionBoxGroup.append(label);
         let input = document.createElement("input");
+        input.setAttribute("required" , "true");
         input.setAttribute("type" , "text");
         input.classList.add("form-control");
         input.id = "questionText" + id;
@@ -254,6 +339,7 @@ const UIHelper = (() => {
         selectMenu1.append(option2);
         selectMenu1.append(option3);
         selectMenu1.append(option4);
+        selectMenu1.setAttribute("required" , "true");
         questionBoxGroup.append(selectMenu1);
         return questionBoxGroup;
     }
@@ -269,7 +355,7 @@ const UIHelper = (() => {
         document.getElementById("answer3" + id).setAttribute("disabled" , "true");
         document.getElementById("answer4" + id).setAttribute("disabled" , "true");
     }
-    const displayQuestionFields = (numQuestions) => {
+    const displayQuestionFields = (numQuestions,questionUUID) => {
         document.getElementById("examSettings").style.display = 'none';
         let questionForm = document.getElementById("examQuestions");
         questionForm.innerHTML = "";
@@ -307,16 +393,15 @@ const UIHelper = (() => {
         subButton.classList.add("text-light");
         subButton.setAttribute("type" , "submit");
         subButton.innerHTML = "Finish Exam Creation";
-        subButton.onclick = () => {showHome()};
+        subButton.onclick = () => {addExam(numQuestions, questionUUID)};
         questionForm.append(subButton);
         questionForm.style.display = 'block';
     }
     return {
-        showHome,
         showLoginUpForm,
         showSignUpForm,
         hideAuthScreen,
-        showTeacherFirstScreen,
+        showFirstScreen,
         displayQuestionFields
     }
 })();
