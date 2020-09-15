@@ -1,5 +1,5 @@
 let database;
-let currentUser;
+let accountTypeG;
 function showSignUpForm(){
     UIHelper.showSignUpForm();
 }
@@ -8,8 +8,8 @@ function submitLogInForm(){
     let email = document.getElementById("userEmail").value;
     let password = document.getElementById("userPassword").value;
     firebase.auth().signInWithEmailAndPassword(email,password).then(() => {
-        database.ref('/users/' + firebase.auth().currentUser.uid).once("value").then((snapshot) => {
-            currentUser = snapshot;
+        database.ref("/users/" + firebase.auth().currentUser.uid).once("value").then((snapshot) => {
+            accountTypeG = snapshot.val().accountType;
             UIHelper.hideAuthScreen();
             UIHelper.showFirstScreen();
         });
@@ -39,11 +39,9 @@ function submitSignUpForm(){
             accountType: accountType,
             examIDs: null,
         });
-        database.ref('/users/' + firebase.auth().currentUser.uid).once("value").then((snapshot) => {
-            currentUser = snapshot;
-            UIHelper.hideAuthScreen();
-            UIHelper.showFirstScreen();
-        });
+        accountTypeG = accountType;
+        UIHelper.hideAuthScreen();
+        UIHelper.showFirstScreen();
     })
     .catch((err) => {
         alert("Sign Up error " + err);
@@ -95,8 +93,38 @@ async function submitExamSettings(){
 }
 
 function addExam(numQuestions, questionUUID){
-    
+    database.ref("/examQuestions/" + questionUUID).set({
+        uuid: questionUUID,
+        numberQuestions: numQuestions
+    });
+    for(let i = 0;i<numQuestions;i++){
+        let questionText = document.getElementById("questionText" + i).value;
+        let questionType = document.getElementById("questionType" + i).value;
+        let ans1,ans2,ans3,ans4;
+        if(questionType === "MCQ"){
+            ans1 = document.getElementById("answer1" + id).value;
+            ans2 = document.getElementById("answer2" + id).value;
+            ans3 = document.getElementById("answer3" + id).value;
+            ans4 = document.getElementById("answer4" + id).value;
+        }
+        else {
+            ans1 = null;
+            ans2 = null;
+            ans3 = null;
+            ans4 = null;
+        }
+        database.ref("/examQuestions/" + questionUUID).push({
+            questionText: questionText,
+            questionType: questionType,
+            ans1: ans1,
+            ans2: ans2,
+            ans3: ans3,
+            ans4:ans4
+        });
+    }
+    UIHelper.hideExamQuestionsForm();
     UIHelper.showFirstScreen();
+    UIHelper.showHome();
 }
 
 function onStartup(){
@@ -104,7 +132,7 @@ function onStartup(){
     document.getElementById("formSignUp").addEventListener("submit", submitSignUpForm);
     document.getElementById("formSignIn").addEventListener("submit", submitLogInForm);
     document.getElementById("examSettings").addEventListener("submit", submitExamSettings);
-    document.getElementById("examQuestions").addEventListener("submit" , submitSignUpForm);
+    //document.getElementById("examQuestions").addEventListener("submit" , addExam);
     database = firebase.database();
 }
 
@@ -140,69 +168,74 @@ const UIHelper = (() => {
         document.getElementById("settingsButton").addEventListener("click", showSettings);
         document.getElementById("aboutButton").addEventListener("click", showAbout);
         let examViewer = document.getElementById("examViewer");
-        let Exams = currentUser.examIDs;
-        if(currentUser.accountType === "student"){
-            TEXT_NO_EXAMS_1 = "You don't seem to have any exams scheduled";
-            TEXT_NO_EXAMS_2 = "You can join an exam by clicking the 'Join Exam' button";
-            BUTTON_TEXT = "Join Exam";
-            document.getElementById("newExamButton").addEventListener("click", showJoinExamForm);
-        }
-        else {
-            TEXT_NO_EXAMS_1 = "You don't seem to have any exams scheduled";
-            TEXT_NO_EXAMS_2 = "You can join an exam by clicking the 'Create Exam' button";
-            BUTTON_TEXT = "Create Exam";
-            document.getElementById("newExamButton").addEventListener("click", showNewExamForm);
-        }
-        document.getElementById("smallButton").innerText = BUTTON_TEXT;
-        if (typeof Exams !== "object") {
-            if (!first)
-                return;
-            let Jumbotron = document.createElement("div");
-            Jumbotron.classList.add("jumbotron");
-            Jumbotron.classList.add('bg-light');
-            let textArea = document.createElement("h1");
-            textArea.innerText = TEXT_NO_EXAMS_1;
-            textArea.classList.add('display-4');
-            Jumbotron.append(textArea);
-            let smallTextArea = document.createElement("p");
-            smallTextArea.innerText = TEXT_NO_EXAMS_2;
-            smallTextArea.classList.add('lead');
-            Jumbotron.append(smallTextArea);
-            examViewer.append(Jumbotron);
-        }
-        else {
+        database.ref("/users/" + firebase.auth().currentUser.uid + "/examIDs/").once("value").then((snapshot) => {
+            let Exams = snapshot.val();
+            if(accountTypeG === "student"){
+                TEXT_NO_EXAMS_1 = "You don't seem to have any exams scheduled";
+                TEXT_NO_EXAMS_2 = "You can join an exam by clicking the 'Join Exam' button";
+                BUTTON_TEXT = "Join Exam";
+                document.getElementById("newExamButton").addEventListener("click", showJoinExamForm);
+            }
+            else {
+                TEXT_NO_EXAMS_1 = "You don't seem to have any exams scheduled";
+                TEXT_NO_EXAMS_2 = "You can join an exam by clicking the 'Create Exam' button";
+                BUTTON_TEXT = "Create Exam";
+                document.getElementById("newExamButton").addEventListener("click", showNewExamForm);
+            }
+            document.getElementById("smallButton").innerText = BUTTON_TEXT;
             examViewer.innerHTML = "";
-            let layoutGrid = document.createElement("div");
-            layoutGrid.classList.add("row");
-            layoutGrid.classList.add("row-cols-3");
-            layoutGrid.classList.add("justify-content-between");
-            Exams.forEach(Exam => {
-                let examCard = document.createElement("div");
-                examCard.classList.add("card");
-                examCard.classList.add("bg-white");
-                examCard.classList.add("m-5");
-                examCard.classList.add("col");
-                examCard.style.textAlign = 'center';
-                let cardBody = document.createElement("div");
-                cardBody.classList.add("card-body");
-                let subjectName = document.createElement("h5");
-                subjectName.classList.add("card-title");
-                subjectName.innerText = Exam.subjectName;
-                let examName = document.createElement("h6");
-                examName.classList.add("card-subtitle");
-                examName.innerText = Exam.examTitle;
-                let examDesc = document.createElement("p");
-                examDesc.classList.add("card-text");
-                examDesc.innerText = Exam.description;
-                cardBody.append(subjectName);
-                cardBody.append(examName);
-                cardBody.append(examDesc);
-                examCard.append(cardBody);
-                layoutGrid.append(examCard);
-            });
-            examViewer.append(layoutGrid);
-        }
-        first = false;
+            console.log(Exams);
+            if (typeof Exams !== "object") {
+                let Jumbotron = document.createElement("div");
+                Jumbotron.classList.add("jumbotron");
+                Jumbotron.classList.add('bg-light');
+                let textArea = document.createElement("h1");
+                textArea.innerText = TEXT_NO_EXAMS_1;
+                textArea.classList.add('display-4');
+                Jumbotron.append(textArea);
+                let smallTextArea = document.createElement("p");
+                smallTextArea.innerText = TEXT_NO_EXAMS_2;
+                smallTextArea.classList.add('lead');
+                Jumbotron.append(smallTextArea);
+                examViewer.append(Jumbotron);
+            }
+            else {
+                let layoutGrid = document.createElement("div");
+                layoutGrid.classList.add("row");
+                layoutGrid.classList.add("row-cols-3");
+                layoutGrid.classList.add("justify-content-between");
+                Exams = Object.values(Exams);
+                console.log(Exams);
+                Exams.forEach(Exam => {
+                    database.ref("/exams/" + Exam).once("value").then((snapshot) => {
+                            let examData = snapshot.val();
+                            let examCard = document.createElement("div");
+                            examCard.classList.add("card");
+                            examCard.classList.add("bg-white");
+                            examCard.classList.add("m-5");
+                            examCard.classList.add("col");
+                            examCard.style.textAlign = 'center';
+                            let cardBody = document.createElement("div");
+                            cardBody.classList.add("card-body");
+                            let subjectName = document.createElement("h5");
+                            subjectName.classList.add("card-title");
+                            subjectName.innerText = examData.courseName;
+                            let examName = document.createElement("h6");
+                            examName.classList.add("card-subtitle");
+                            examName.innerText = examData.examTitle;
+                            let examDesc = document.createElement("p");
+                            examDesc.classList.add("card-text");
+                            examDesc.innerText = examData.description;
+                            cardBody.append(subjectName);
+                            cardBody.append(examName);
+                            cardBody.append(examDesc);
+                            examCard.append(cardBody);
+                            layoutGrid.append(examCard);
+                    });
+                });
+                examViewer.append(layoutGrid);
+            }
+        })
     }
     const showNewExamForm = () => {
         document.getElementById("examViewer").style.display = "none";
@@ -397,11 +430,18 @@ const UIHelper = (() => {
         questionForm.append(subButton);
         questionForm.style.display = 'block';
     }
+    const hideExamQuestionsForm = () => {
+        document.getElementById("examQuestions").style.display = "none";
+        document.getElementById("examQuestions").innerHTML = "";
+    }
+
     return {
+        showHome,
         showLoginUpForm,
         showSignUpForm,
         hideAuthScreen,
         showFirstScreen,
-        displayQuestionFields
+        displayQuestionFields,
+        hideExamQuestionsForm
     }
 })();
