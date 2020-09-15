@@ -18,13 +18,13 @@
             <div class="login-form bg-light mt-3 ml-4 mr-4" id="signInForm">
                 <form id="formSignIn" onsubmit="return false;">
                     <div class="form-group">
-                    <label for="userEmail">Email address</label>
-                    <input type="email" class="form-control" id="userEmail" aria-describedby="emailHelp" required>
-                    <small id="emailHelp" class="form-text text-muted">Input the email you used to sign up</small>
+                        <label for="userEmail">Email address</label>
+                        <input type="email" class="form-control" id="userEmail" aria-describedby="emailHelp" required>
+                        <small id="emailHelp" class="form-text text-muted">Input the email you used to sign up</small>
                     </div>
                     <div class="form-group">
-                    <label for="userPassword">Password</label>
-                    <input type="password" class="form-control" id="userPassword" required>
+                        <label for="userPassword">Password</label>
+                        <input type="password" class="form-control" id="userPassword" required>
                     </div>
                     <button type="submit" class="btn btn-lg btn-block sign-in-buttons text-light">Login</button>
                 </form>
@@ -34,12 +34,12 @@
                 <form id="formSignUp" onsubmit="return false;">
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                        <label for="firstName">First Name</label>
-                        <input type="text" class="form-control" id="firstName" required>
+                            <label for="firstName">First Name</label>
+                            <input type="text" class="form-control" id="firstName" required>
                         </div>
                         <div class="form-group col-md-6">
-                        <label for="lastName">Last Name</label>
-                        <input type="text" class="form-control" id="lastName" required>
+                            <label for="lastName">Last Name</label>
+                            <input type="text" class="form-control" id="lastName" required>
                         </div>
                     </div>
                     <div class="form-group">
@@ -47,13 +47,13 @@
                         <input type="text" class="form-control" id="userEmail" aria-describedby="userSchool" required>
                     </div>
                     <div class="form-group">
-                    <label for="userEmail">Email address</label>
-                    <input type="email" class="form-control" id="userEmail" aria-describedby="emailHelp" required>
-                    <small id="emailHelp" class="form-text text-muted">You will be asked to verify this email</small>
+                        <label for="userEmail">Email address</label>
+                        <input type="email" class="form-control" id="userEmail" aria-describedby="emailHelp" required>
+                        <small id="emailHelp" class="form-text text-muted">You will be asked to verify this email</small>
                     </div>
                     <div class="form-group">
-                    <label for="userPassword">Password</label>
-                    <input type="password" class="form-control" id="userPassword" required>
+                        <label for="userPassword">Password</label>
+                        <input type="password" class="form-control" id="userPassword" required>
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" name="accountTypeRadios" type="radio" value="" id="teacherRadio" required> 
@@ -74,7 +74,17 @@
         <div id="mainPageContainer" class="container-fluid">
             <div class="row" id="rowMainPage">
                 <nav class="nav flex-column col-1 text-light" id="navbar">
-                    <button class="nav-item btn text-light navButtons" onclick="alert('Here')">
+                    <button class="nav-item btn text-light navButtons mt-1" id="homeButton">
+                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-house-door" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M7.646 1.146a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 .146.354v7a.5.5 0 0 1-.5.5H9.5a.5.5 0 0 1-.5-.5v-4H7v4a.5.5 0 0 1-.5.5H2a.5.5 0 0 1-.5-.5v-7a.5.5 0 0 1 .146-.354l6-6zM2.5 7.707V14H6v-4a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v4h3.5V7.707L8 2.207l-5.5 5.5z"/>
+                            <path fill-rule="evenodd" d="M13 2.5V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z"/>
+                        </svg>
+                        <br>
+                        <small>
+                            Home
+                        </small>
+                    </button>
+                    <button class="nav-item btn text-light navButtons mt-1" id="newExamButton">
                         <svg width="4em" height="1em" viewBox="0 0 16 16" class="bi bi-plus" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
                         </svg>
@@ -83,7 +93,7 @@
                             New Exam.
                         </small>
                     </button>
-                    <button class="nav-item mt-1 btn text-light navButtons" onclick="alert('here')">
+                    <button class="nav-item mt-1 btn text-light navButtons" id="settingsButton">
                         <svg width="4em" height="1em" viewBox="0 0 16 16" class="bi bi-sliders" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" d="M11.5 2a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM9.05 3a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0V3h9.05zM4.5 7a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM2.05 8a2.5 2.5 0 0 1 4.9 0H16v1H6.95a2.5 2.5 0 0 1-4.9 0H0V8h2.05zm9.45 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm-2.45 1a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0v-1h9.05z"/>
                         </svg>
@@ -92,7 +102,7 @@
                             Settings
                         </small>
                     </button>
-                    <button class="btn text-light navButtons nav-item">
+                    <button class="btn text-light navButtons nav-item mt-1" id="aboutButton">
                         <svg width="4em" height="1em" viewBox="0 0 16 16" class="bi bi-info" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                             <path d="M8.93 6.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588z"/>
                             <circle cx="8" cy="4.5" r="1"/>
@@ -103,7 +113,98 @@
                         </small>
                     </button>
                 </nav>
-                <div class="col-11 bg-light"></div>
+                <div class="col-11 bg-light container mt-2" id="examViewer"></div>
+                <div class="col-11 bg-light container mt-2" id="newExamForm" style="display: none;">
+                    <form id="examSettings" onsubmit="return false;">
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="courseName">Course Name:</label>
+                                <input type="text" class="form-control" id="courseName" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="examTitle">Exam Title:</label>
+                                <input type="text" class="form-control" id="examTitle" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="duration">Duration</label>
+                                <input type="number" class="form-control" id="duration" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="date">Date:</label>
+                                <input type="date" class="form-control" id="date" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="timeOfDay">Time of Day:</label>
+                                <input type="time" class="form-control" id="timeOfDay" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="description">Description: </label>
+                                <input type="text" class="form-control" id="description" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="examNumQuestions">Number of Questions:</label>
+                            <input type="number" class="form-control" id="examNumQuestions" required>
+                        </div>
+                        <h5>Policies: </h5>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="policyMinimization">
+                            <label class="form-check-label" for="policyMinimization">
+                                Detect when the exam page is minimized by the student
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="policyScreenSize">
+                            <label class="form-check-label" for="policyScreenSize">
+                                Detect when the size of the exam page is changed by the student
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="policyObjectDetection">
+                            <label class="form-check-label" for="policyObjectDetection">
+                                Detect (using a webcam) abnormal objects (cellphones, headsets, books) in the vacinity of the student
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="policyHeadPoseDetection">
+                            <label class="form-check-label" for="policyHeadPoseDetection">
+                                Detect (using a webcam) the student's pose (i.e. where is he looking). (NOT VERY ACCURATE).
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="policyPeopleDetection">
+                            <label class="form-check-label" for="policyPeopleDetection">
+                                Detect (using a webcam) the number of people in the student's room.
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="policyAudioDetection">
+                            <label class="form-check-label" for="policyAudioDetection">
+                                Detect (using a microphone) voice and other noises in the student's vacinity.
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="policyAutomaticFailure">
+                            <label class="form-check-label" for="policyAutomaticFailure">
+                                Autofail the student when a sufficient number of infractions is detected.
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label for="thresholdNumber">Number of infractions to label a student a cheater:</label>
+                            <input type="number" class="form-control" id="thresholdNumber" required>
+                        </div>
+                        <button type="submit" class="btn btn-lg btn-block sign-in-buttons text-light">Submit exam info</button>
+                    </form>
+                    <form id="examQuestions" onsubmit="return false;" style="display: none;">
+
+                    </form>
+                </div>
+                <div class="col-11 bg-light container mt-2" id="settings" style="display: none;"></div>
+                <div class="col-11 bg-light container mt-2" id="about" style="display: none;"></div>
         </div>
     </body>
 </html>
