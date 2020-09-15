@@ -1,3 +1,54 @@
+function showSignUpForm(){
+    UIHelper.showSignUpForm();
+}
+
+function submitLogInForm(){
+    let email = document.getElementById("userEmail").value;
+    firebase.auth().sendSignInLinkToEmail(email,{
+        url: 'https://www.secuexam.firebaseapp.com ',
+        handleCodeInApp: true,
+        iOS: {
+            bundleId: 'com.example.ios'
+        },
+        android: {
+            packageName: 'com.example.android',
+            installApp: true,
+            minimumVersion: '12'
+        },
+        dynamicLinkDomain: 'example.page.link'
+    }).then(() => {
+        alert("done");
+    }).catch((err) => {console.log(err)});
+    //UIHelper.hideAuthScreen();
+    //let exams = null;
+    //UIHelper.showTeacherFirstScreen(exams);
+}
+
+function submitSignUpForm(){
+    UIHelper.hideAuthScreen();
+    let exams = null;
+    UIHelper.showTeacherFirstScreen(exams);
+}
+
+function submitExamSettings(){
+    let numQuestions = document.getElementById("examNumQuestions").value;
+    UIHelper.displayQuestionFields(numQuestions);
+}
+
+function addExam(){
+    UIHelper.showHome();
+}
+
+function onStartup(){
+    document.getElementById("sign-up-button").addEventListener("click", showSignUpForm);
+    document.getElementById("formSignUp").addEventListener("submit", submitSignUpForm);
+    document.getElementById("formSignIn").addEventListener("submit", submitLogInForm);
+    document.getElementById("examSettings").addEventListener("submit", submitExamSettings);
+    document.getElementById("examQuestions").addEventListener("submit" , submitSignUpForm);
+}
+
+window.addEventListener("load", onStartup);
+
 //Main UI renderer is inside the function UIHelper.
 const UIHelper = (() => {
     let first = true;
@@ -270,38 +321,3 @@ const UIHelper = (() => {
         displayQuestionFields
     }
 })();
-
-function showSignUpForm(){
-    UIHelper.showSignUpForm();
-}
-
-function submitLogInForm(){
-    UIHelper.hideAuthScreen();
-    let exams = null;
-    UIHelper.showTeacherFirstScreen(exams);
-}
-
-function submitSignUpForm(){
-    UIHelper.hideAuthScreen();
-    let exams = null;
-    UIHelper.showTeacherFirstScreen(exams);
-}
-
-function submitExamSettings(){
-    let numQuestions = document.getElementById("examNumQuestions").value;
-    UIHelper.displayQuestionFields(numQuestions);
-}
-
-function addExam(){
-    UIHelper.showHome();
-}
-
-function onStartup(){
-    document.getElementById("sign-up-button").addEventListener("click", showSignUpForm);
-    document.getElementById("formSignUp").addEventListener("submit", submitSignUpForm);
-    document.getElementById("formSignIn").addEventListener("submit", submitLogInForm);
-    document.getElementById("examSettings").addEventListener("submit", submitExamSettings);
-    document.getElementById("examQuestions").addEventListener("submit" , submitSignUpForm);
-}
-
-window.addEventListener("load", onStartup);

@@ -8,6 +8,25 @@
         <script src="lib/js/popper.min.js"></script>
         <script src="lib/js/bootstrap.js"defer></script>
         <script src="mainApp.js" async defer></script>
+        <!-- The core Firebase JS SDK is always required and must be listed first -->
+        <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-app.js"></script>
+
+        <!-- TODO: Add SDKs for Firebase products that you want to use
+            https://firebase.google.com/docs/web/setup#available-libraries -->
+        <script defer src="https://www.gstatic.com/firebasejs/7.20.0/firebase-auth.js"></script>
+        <script>
+             var firebaseConfig = {
+            apiKey: "AIzaSyComOpvSJtnXcBkcNIPdnXy8HY3DGsfUlw",
+            authDomain: "secuexam.firebaseapp.com",
+            databaseURL: "https://secuexam.firebaseio.com",
+            projectId: "secuexam",
+            storageBucket: "secuexam.appspot.com",
+            messagingSenderId: "547967237496",
+             appId: "1:547967237496:web:b8938a4778c217ec35dc8d"
+            };
+            // Initialize Firebase
+            firebase.initializeApp(firebaseConfig);
+        </script>
     </head>
     <body class="bg-light">
         <div class="container" id="firstScreenContiner">
