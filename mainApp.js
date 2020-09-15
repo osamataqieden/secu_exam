@@ -4,30 +4,29 @@ function showSignUpForm(){
 
 function submitLogInForm(){
     let email = document.getElementById("userEmail").value;
-    firebase.auth().sendSignInLinkToEmail(email,{
-        url: 'https://www.secuexam.firebaseapp.com ',
-        handleCodeInApp: true,
-        iOS: {
-            bundleId: 'com.example.ios'
-        },
-        android: {
-            packageName: 'com.example.android',
-            installApp: true,
-            minimumVersion: '12'
-        },
-        dynamicLinkDomain: 'example.page.link'
-    }).then(() => {
-        alert("done");
-    }).catch((err) => {console.log(err)});
-    //UIHelper.hideAuthScreen();
-    //let exams = null;
-    //UIHelper.showTeacherFirstScreen(exams);
+    let password = document.getElementById("userPassword").value;
+    firebase.auth().signInWithEmailAndPassword(email,password).then(() => {
+        
+        UIHelper.hideAuthScreen();
+        //let exams = null;
+        //UIHelper.showTeacherFirstScreen(exams);
+    }).catch((err) => {
+        alert("Error signing in " + err);
+    });
 }
 
 function submitSignUpForm(){
-    UIHelper.hideAuthScreen();
-    let exams = null;
-    UIHelper.showTeacherFirstScreen(exams);
+    let email = document.getElementById("userEmail1").value;
+    let password = document.getElementById("userPassword1").value;
+    firebase.auth().createUserWithEmailAndPassword(email,password).then(() => {
+        alert("done");
+    })
+    .catch((err) => {
+        alert("Error signing up " + err);
+    })
+    //UIHelper.hideAuthScreen();
+    //let exams = null;
+    //UIHelper.showTeacherFirstScreen(exams);
 }
 
 function submitExamSettings(){
