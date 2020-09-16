@@ -5,7 +5,7 @@ This application is build on electronJS, and is a work in progress.
 # Installation  
 
 # Precompiled Binaries
-Download and launch the application from '/dist/'
+Download and launch the application from https://drive.google.com/file/d/1KtLVExfVhUqxZ32a5z1dj7BmcdV1Zg63/view?usp=sharing
 
 # Build from source.  
 To build this application from source, pull/clone this repo and do the following:  
