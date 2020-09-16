@@ -244,11 +244,11 @@ function onStartup(){
         }
         if(examData.examData.policies.headPoseDetection){
             addText("headPoseDetection", "You MAY NOT look left/right/up/down during the exam");
-            addText("headPoseDetectionWarning" , "If this is enabled, please don't move your screen or your change the angle of your laptop screen");
         }
         else{
             addText("headPoseDetection", "You MAY look left/right/up/down during the exam");
         }
+        addText("headPoseDetectionWarning" , "If this is enabled, please don't move your screen or your change the angle of your laptop screen");
         if(examData.examData.policies.audioDetection){
             addText("audioDetection", "You MAY NOT talk or hear any voice or make any noise during the exam");
         }

@@ -138,12 +138,21 @@ function startExam(examData){
                 examQuestions: examQuestions
             });
             ipcRenderer.on("exam-done" , (event ,args) => {
-                database.ref("/users/" + firebase.auth().currentUser.uid + "/examIDs/" + examData.uuid).remove();
-                let studentKey = "studentUID";
-                args[studentKey] = firebase.auth().currentUser.uid;
-                database.ref("/examAnswers/" + examData.uuid).set(args);
-                showHome();
-                ipcRenderer.send("exam-done-uploaded");
+                database.ref("/users/" + firebase.auth().currentUser.uid + "/examIDs/").once("value").then((snapshot) => {
+                    let key;
+                    snapshot.forEach((childSnapshot) => {
+                        if(childSnapshot.val() === examData.uuid){
+                            key = childSnapshot.key;
+                            return true;
+                        }
+                    });
+                    database.ref("/users/" + firebase.auth().currentUser.uid + "/examIDs/" + key).remove();
+                    let studentKey = "studentUID";
+                    args[studentKey] = firebase.auth().currentUser.uid;
+                    database.ref("/examAnswers/" + examData.uuid + "/" + firebase.auth().currentUser.uid).set(args);
+                    UIHelper.showHome();
+                    ipcRenderer.send("exam-done-uploaded");
+                })
             });
 
         })
@@ -246,18 +255,6 @@ const UIHelper = (() => {
         let smallTextArea5 = document.createElement("p");
         smallTextArea5.classList.add('lead');
         smallTextArea5.innerText = "Exam token: " + examUUID;
-        let subButton = document.createElement("button");
-        subButton.classList.add("btn");
-        subButton.classList.add("btn-lg");
-        subButton.classList.add("btn-block");
-        subButton.classList.add("sign-in-buttons");
-        subButton.classList.add("text-light");
-        subButton.classList.add("m-5");
-        subButton.setAttribute("type" , "submit");
-        subButton.innerHTML = "Start Exam";
-        subButton.addEventListener("click" , () => {
-            startExam(examData);
-        });
         Jumbotron.append(textArea);
         Jumbotron.append(smallTextArea);
         Jumbotron.append(smallTextArea2);
@@ -265,8 +262,54 @@ const UIHelper = (() => {
         Jumbotron.append(smallTextArea4);
         Jumbotron.append(smallTextArea5);
         examViewer.append(Jumbotron);
-        examViewer.append(subButton);
+        if(accountTypeG === "student"){
+            let subButton = document.createElement("button");
+            subButton.classList.add("btn");
+            subButton.classList.add("btn-lg");
+            subButton.classList.add("btn-block");
+            subButton.classList.add("sign-in-buttons");
+            subButton.classList.add("text-light");
+            subButton.classList.add("m-5");
+            subButton.setAttribute("type" , "submit");
+            subButton.innerHTML = "Start Exam";
+            subButton.addEventListener("click" , () => {
+                startExam(examData);
+            });
+            examViewer.append(subButton);
+        }
+        else{
+            database.ref("/examAnswers/" + examUUID).once("value").then((snapshot) => {
+                if(snapshot.exists()){
+                    let smallTextArea6 = document.createElement("h5");
+                    smallTextArea6.classList.add('lead');
+                    smallTextArea6.innerText = "The following is a list of people who has taken this exam!";
+                    Jumbotron.append(smallTextArea6);
+                    let selectMenu = document.createElement("select");
+                    selectMenu.classList.add("custom-select");
+                    Jumbotron.append(selectMenu);
+                    snapshot.forEach((childSnapshot) => {
+                        database.ref("/users/" + childSnapshot.key).once("value").then((userSnapshot) => {
+                            let studentTE = userSnapshot.val();
+                            let option = document.createElement("option");
+                            option.setAttribute("value" , studentTE.firstName + "_" + studentTE.lastName);
+                            if(childSnapshot.val().didFail){
+                                option.innerText = studentTE.firstName + " " + studentTE.lastName + " (THIS STUDENT WAS DETECTED AS A CHEATER)";
+                            }
+                            else option.innerText = studentTE.firstName + " " + studentTE.lastName;
+                            selectMenu.append(option);
+                        });
+                    });
+                }
+                else {
+                    let smallTextArea6 = document.createElement("h5");
+                    smallTextArea6.classList.add('lead');
+                    smallTextArea6.innerText = "It appears no one has taken your exam yet!";
+                    examViewer.append(smallTextArea6);
+                }
+            })
+        }
     }
+
     const showFirstScreen = () => {
         document.getElementById("mainPageContainer").style.display = "block";
         document.getElementById("homeButton").addEventListener("click", showHome);
