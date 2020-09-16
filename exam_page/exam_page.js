@@ -1,20 +1,72 @@
 const { ipcRenderer } = require("electron");
 let examData;
+let currentIndex;
+let answers;
 
 function addText(HTMLElementID, text){
     document.getElementById(HTMLElementID).innerText = text;
 }
 
-function showExam(){
-    alert("Started!");
+function nextQuestion(){
+    
+}
+
+function createRadioElement(text , forVal){
+    let formCheck = document.createElement("div");
+    formCheck.classList.add("form-check");
+    let formCheckInput = document.createElement("input");
+    formCheckInput.setAttribute("type" , "radio");
+    formCheckInput.setAttribute("name", "MCQAnswer");
+    formCheckInput.classList.add("form-check-input");
+    formCheckInput.id = "MCQAnswer" + forVal;
+    let formCheckLabel = document.createElement("label");
+    formCheckLabel.setAttribute("for" , "MCQAnswer" + forVal);
+    formCheckLabel.classList.add("form-check-label");
+    formCheckLabel.innerText = text;
+    formCheck.append(formCheckInput);
+    formCheck.append(formCheckLabel);
+}
+
+function displayQuestion(currentIndex){
+    let examBoard = document.getElementById("examBoard");
+    examBoard.innerHTML = "";
+    let questionText = answers[currentIndex].questionText;
+    let questionType = answers[currentIndex].questionType;
+    let questionTextElement = document.createElement("p");
+    questionTextElement.classList.add("lead");
+    questionTextElement.innerText = "Q" + (currentIndex + 1) + ": " + questionText;
+    if(questionType === "Essay"){
+        let textarea = document.createElement("textarea");
+        examBoard.append(questionText);
+        examBoard.append(textarea);
+    }
+    else if(questionType === "MCQ"){
+        let firstAnswer = createRadioElement(answers[currentIndex].answer1, 1);
+        let secondAnswer = createRadioElement(answers[currentIndex].answer2, 2);
+        let thirdAnswer = createRadioElement(answers[currentIndex].answer3, 3);
+        let forthAnswer = createRadioElement(answers[currentIndex].answer4, 4);
+        examBoard.append(questionText);
+        examBoard.append(firstAnswer);
+        examBoard.append(secondAnswer);
+        examBoard.append(thirdAnswer);
+        examBoard.append(forthAnswer);
+    }
+    else if(questionType === "TF"){
+        let firstAnswer = createRadioElement("True" , 1);
+        let secondAnswer = createRadioElement("False" , 1);
+        examBoard.append(questionText);
+        examBoard.append(firstAnswer);
+        examBoard.append(secondAnswer);
+    }
 }
 
 function screenSizeChange(){
-    ipcRenderer.send("screen-size-change");
+    if(examData.examData.policies.screenSize)
+        ipcRenderer.send("screen-size-change");
 }
 
 function visibiltyChange(){
-    if(document.hidden)
+    if(document.hidden && examData.examData.policies.minimization)
         ipcRenderer.send("visibilty-change");
 }
 
@@ -28,6 +80,12 @@ function startExam(){
     })
     window.addEventListener("resize" , screenSizeChange);
     document.addEventListener("visibilitychange" , visibiltyChange);
+    currentIndex = 0;
+    answers = Object.values(examData.examQuestions).filter((value) => {
+        return typeof value === "object";
+    });
+    document.getElementById("examBoard").style.display = "block";
+    displayQuestion(currentIndex);
 }
 
 function onStartup(){

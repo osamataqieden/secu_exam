@@ -13,8 +13,8 @@
             }
         </style>
     </head>
-    <body>
-        <div class="container-fluid bg-light" style="text-align: center; height: 100vh;">
+    <body class="bg-light">
+        <div class="container-fluid bg-light" style="text-align: center; height: 100vh;" id="welcomescreen">
             <div class="jumbotron bg-light">
                 <h1 class="display-4" id="courseTitle"></h1>
                 <p class="lead" id="examTitle"></p>
@@ -34,6 +34,8 @@
                 </ul>
             </div>
             <button class="btn btn-lg btn-block sign-in-buttons text-light" id="startExamButton">Start Exam!</button>
+        </div>
+        <div class="container bg-light" style="height: 100vh; display: none;" id="examBoard">
         </div>
     </body>
 </html>
