@@ -5,8 +5,29 @@ function addText(HTMLElementID, text){
     document.getElementById(HTMLElementID).innerText = text;
 }
 
-function startExam(){
+function showExam(){
+    alert("Started!");
+}
 
+function screenSizeChange(){
+    ipcRenderer.send("screen-size-change");
+}
+
+function visibiltyChange(){
+    if(document.hidden)
+        ipcRenderer.send("visibilty-change");
+}
+
+function startExam(){
+    ipcRenderer.send("start-exam");
+    ipcRenderer.on("observation-started" , (event, arg) => {
+        showExam();
+        ipcRenderer.on("cheat-auto-fail" , (event, arg) => {
+            alert("Cheat Discovered!");
+        })
+    })
+    window.addEventListener("resize" , screenSizeChange);
+    document.addEventListener("visibilitychange" , visibiltyChange);
 }
 
 function onStartup(){
@@ -43,6 +64,7 @@ function onStartup(){
         }
         if(examData.examData.policies.headPoseDetection){
             addText("headPoseDetection", "You MAY NOT look left/right/up/down during the exam");
+            addText("headPoseDetectionWarning" , "If this is enabled, please don't move your screen or your change the angle of your laptop screen");
         }
         else{
             addText("headPoseDetection", "You MAY look left/right/up/down during the exam");
