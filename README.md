@@ -13,18 +13,41 @@ To build this application from source, pull/clone this repo and do the following
 * run npm install
 * run npm start.
 
-# List of Features.  
-This application provides the following futures:  
-- Two types of Accounts, Students and Teachers.  
-- Teachers get to set the exams and the policies.  
-- Students get to take the exam.  
+# Special Thanks:  
+- To the Techathon team that was very supportive.  
+- To the developers of Electron.js  
+- To the developers of Harker.js
+- To the developers of firebase Auth and Database.
+- to the developers of AWS Rekogenetion.
 
+# Usage, Policies and restrictions.  
+# Usage.  
+This application is used to establish online exams and coordinate them and use online automated proctoring to monitor the exam.  
+Teachers must create a teacher's account, teachers can create exams and set policies that students must follow during the exam.  
+Students must create a student's account, students can join the exams after teachers provide them with the exam tokens.  
 # Policies.  
-This application allows the teacher to set the following policies:  
-- Face count detection: detect how many faces are in the room at the moment.
-- Object detection: detect suspicious objects in the student's vacinity.  
-- Audio detection: detect voices.   
-- Screen minimzation and size changing: detect screen minimization and size changing.  
+Teachers can set the following policies:  
+* Detect when the students change the size of the screen / minimize the screen.  
+* Detect abnormal objects (defined in the program as cellphones, headsets, books or the acting of reading).  
+* Detect when the student is looking away from the screen (not very accurate).  
+* Detect noise/voices in the vacinity of the student.  
+# Restricitions.  
+- This application is a work-in-progress and was not tested appropriately, bugs are bound to appear.
+- If found any, please report them.  
 
-* Policies that use images are powered by AWS Rekogention, and the audio policiy is powered by Harker.js
+# Setting up an Exam.
+To set up an exam, you must login to a teacher's account and press 'Create an Exam' on the toolbar on the left.  
+You must then follow the instructions.
+You must send the token to your student to join the exam.  
+
+# Joining the exam.  
+To join an exam, you must have the token to that exam, only the teacher can provide it for you.
+You must then follow the instructions.  
+You can't start the exam before the start time.  
+You must complete the exam before the duration is over.  
+You must compliy with the policies set by your teacher.  
+
+
+
+
 
