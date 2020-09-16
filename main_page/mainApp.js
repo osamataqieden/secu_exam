@@ -100,26 +100,26 @@ function addExam(numQuestions, questionUUID){
     for(let i = 0;i<numQuestions;i++){
         let questionText = document.getElementById("questionText" + i).value;
         let questionType = document.getElementById("questionType" + i).value;
-        let ans1,ans2,ans3,ans4;
+        let answer1, answer2, answer3, answer4;
         if(questionType === "MCQ"){
-            ans1 = document.getElementById("answer1" + id).value;
-            ans2 = document.getElementById("answer2" + id).value;
-            ans3 = document.getElementById("answer3" + id).value;
-            ans4 = document.getElementById("answer4" + id).value;
+            answer1 = document.getElementById("answer1" + i).value;
+            answer2 = document.getElementById("answer2" + i).value;
+            answer3 = document.getElementById("answer3" + i).value;
+            answer4 = document.getElementById("answer4" + i).value;
         }
         else {
-            ans1 = null;
-            ans2 = null;
-            ans3 = null;
-            ans4 = null;
+            answer1 = null;
+            answer2 = null;
+            answer3 = null;
+            answer4 = null;
         }
         database.ref("/examQuestions/" + questionUUID).push({
             questionText: questionText,
             questionType: questionType,
-            ans1: ans1,
-            ans2: ans2,
-            ans3: ans3,
-            ans4:ans4
+            answer1: answer1,
+            answer2: answer2,
+            answer3: answer3,
+            answer4: answer4
         });
     }
     UIHelper.hideExamQuestionsForm();
@@ -131,13 +131,21 @@ function startExam(examData){
     const date = Date.parse(examData.date + "T" + examData.timeOfDay + ":00");
     const now = Date.now();
     if(now >= date){
-        alert("You can start the exam!");
         database.ref("/examQuestions/" + examData.questionsUUID).once("value").then((snapshot) => {
             let examQuestions = snapshot.val();
             ipcRenderer.send('asynchronous-message' , {
                 examData: examData,
                 examQuestions: examQuestions
             });
+            ipcRenderer.on("exam-done" , (event ,args) => {
+                database.ref("/users/" + firebase.auth().currentUser.uid + "/examIDs/" + examData.uuid).remove();
+                let studentKey = "studentUID";
+                args[studentKey] = firebase.auth().currentUser.uid;
+                database.ref("/examAnswers/" + examData.uuid).set(args);
+                showHome();
+                ipcRenderer.send("exam-done-uploaded");
+            });
+
         })
     }
     else {

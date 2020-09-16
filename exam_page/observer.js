@@ -37,6 +37,9 @@ function startup() {
                 checkThreshold();
             }
         });
+        ipcRenderer.on("exam-over" , (event, arg) => {
+            event.sender.send("shut-down" , {cheatingattempts: cheatingattempts});
+        });
     });
 
 }

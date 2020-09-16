@@ -1,4 +1,4 @@
-const { app, BrowserWindow , ipcMain} = require('electron');
+const { app, BrowserWindow , ipcMain, ipcRenderer} = require('electron');
 let mainWindow, examWindow, observerWindow;
 
 function appReady(){
@@ -12,6 +12,7 @@ function appReady(){
     });
     mainWindow.loadFile('./main_page/mainApp.html');
     mainWindow.removeMenu();
+    mainWindow.webContents.openDevTools();
 };
 
 ipcMain.on("asynchronous-message" , (event,arg) => {
@@ -64,6 +65,20 @@ function startExam(examData){
             ipcMain.on("screen-size-change", (event, arg) => {
                 observerWindow.webContents.send("screen-size-change");
             })
+        });
+        ipcMain.on("exam-over" , (event , args) => {
+            observerWindow.webContents.send("exam-over");
+            ipcMain.on("shut-down" , (event,args) => {
+                examWindow.send("shut-down-observer" , args);
+                observerWindow.close();
+                ipcMain.on("exam-results" , (event, args) => {
+                    examWindow.close();
+                    mainWindow.webContents.send("exam-done" , args);
+                    ipcMain.on("exam-done-uploaded" , (event,args) => {
+                        mainWindow.show();
+                    })
+                })
+            });
         });
     })
 }
