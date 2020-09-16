@@ -2,11 +2,9 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="lib/css/bootstrap.min.css">
+        <link rel="stylesheet" href="../lib/css/bootstrap.min.css">
         <link rel="stylesheet" href="mainApp.css">
-        <script src="lib/js/jquery-3.5.1.slim.min.js"></script>
-        <script src="lib/js/popper.min.js"></script>
-        <script defer src="lib/js/bootstrap.js"></script>
+
         <script src="https://unpkg.com/uuid@latest/dist/umd/uuidv4.min.js"></script>
         <script src="mainApp.js" async defer></script>
         <!-- The core Firebase JS SDK is always required and must be listed first -->
@@ -134,7 +132,9 @@
                         </small>
                     </button>
                 </nav>
-                <div class="col-11 bg-light container mt-2" id="examViewer"></div>
+                <div class="col-11 bg-light container mt-2 pr-2" id="examViewer">
+                    
+                </div>
                 <div class="col-11 bg-light container mt-2" id="newExamForm" style="display: none;">
                     <form id="examSettings" onsubmit="return false;">
                         <div class="form-row">

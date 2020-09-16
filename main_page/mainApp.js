@@ -1,9 +1,9 @@
 let database;
 let accountTypeG;
+const {ipcRenderer} = require('electron');
 function showSignUpForm(){
     UIHelper.showSignUpForm();
 }
-
 function submitLogInForm(){
     let email = document.getElementById("userEmail").value;
     let password = document.getElementById("userPassword").value;
@@ -127,12 +127,33 @@ function addExam(numQuestions, questionUUID){
     UIHelper.showHome();
 }
 
+function startExam(examData){
+    const date = Date.parse(examData.date + "T" + examData.timeOfDay + ":00");
+    const now = Date.now();
+    if(now >= date){
+        alert("You can start the exam!");
+        database.ref("/examQuestions/" + examData.questionsUUID).once("value").then((snapshot) => {
+            let examQuestions = snapshot.val();
+            ipcRenderer.send('asynchronous-message' , {
+                examData: examData,
+                examQuestions: examQuestions
+            });
+        })
+    }
+    else {
+        alert("This Exam has not started yet, please check the start date for this exam");
+    }
+}
+
+function addToken(token){
+    database.ref("/users/" + firebase.auth().currentUser.uid + "/examIDs/").push(token);
+}
+
 function onStartup(){
     document.getElementById("sign-up-button").addEventListener("click", showSignUpForm);
     document.getElementById("formSignUp").addEventListener("submit", submitSignUpForm);
     document.getElementById("formSignIn").addEventListener("submit", submitLogInForm);
     document.getElementById("examSettings").addEventListener("submit", submitExamSettings);
-    //document.getElementById("examQuestions").addEventListener("submit" , addExam);
     database = firebase.database();
 }
 
@@ -160,7 +181,83 @@ const UIHelper = (() => {
         document.getElementById("firstScreenContiner").style.display = 'none';
     }
     const showJoinExamForm = () => {
-        alert("HELLO");
+        let examViewer = document.getElementById("examViewer");
+        examViewer.innerHTML = "";
+        let form = document.createElement("form");
+        let formGroup = document.createElement("form-group");
+        let label = document.createElement("label");
+        label.setAttribute("for","tokenInput");
+        label.innerText = "Exam Token: ";
+        let input = document.createElement("input");
+        input.setAttribute("type" , "text");
+        input.setAttribute("required" , "true");
+        input.classList.add("form-control");
+        input.id = "tokenInput";
+        let subButton = document.createElement("button");
+        subButton.classList.add("btn");
+        subButton.classList.add("btn-lg");
+        subButton.classList.add("btn-block");
+        subButton.classList.add("sign-in-buttons");
+        subButton.classList.add("text-light");
+        subButton.classList.add("mt-1");
+        subButton.setAttribute("type" , "submit");
+        subButton.innerHTML = "Join Exam";
+        formGroup.append(label);
+        formGroup.append(input);
+        form.append(formGroup);
+        form.append(subButton);
+        examViewer.append(form);
+        subButton.onclick = () => {
+            addToken(input.value);
+            examViewer.innerHTML = "";
+            showFirstScreen();
+        }
+    }
+    const examCardClick = (examData, examUUID) => {
+        let examViewer = document.getElementById("examViewer");
+        examViewer.innerHTML = "";
+        examViewer.style.textAlign = "center";
+        let Jumbotron = document.createElement("div");
+        Jumbotron.classList.add("jumbotron");
+        Jumbotron.classList.add('bg-light');
+        let textArea = document.createElement("h1");
+        textArea.innerText = examData.courseName;
+        textArea.classList.add('display-4');
+        let smallTextArea = document.createElement("p");
+        smallTextArea.classList.add('lead');
+        smallTextArea.innerText = examData.examTitle;
+        let smallTextArea2 = document.createElement("p");
+        smallTextArea2.classList.add('lead');
+        smallTextArea2.innerText = examData.description;
+        let smallTextArea3 = document.createElement("p");
+        smallTextArea3.classList.add('lead');
+        smallTextArea3.innerText = "Exam duration: " + examData.duration;
+        let smallTextArea4 = document.createElement("p");
+        smallTextArea4.classList.add('lead');
+        smallTextArea4.innerText = "This exam will be held at " + examData.date + " at " + examData.timeOfDay;
+        let smallTextArea5 = document.createElement("p");
+        smallTextArea5.classList.add('lead');
+        smallTextArea5.innerText = "Exam token: " + examUUID;
+        let subButton = document.createElement("button");
+        subButton.classList.add("btn");
+        subButton.classList.add("btn-lg");
+        subButton.classList.add("btn-block");
+        subButton.classList.add("sign-in-buttons");
+        subButton.classList.add("text-light");
+        subButton.classList.add("m-5");
+        subButton.setAttribute("type" , "submit");
+        subButton.innerHTML = "Start Exam";
+        subButton.addEventListener("click" , () => {
+            startExam(examData);
+        });
+        Jumbotron.append(textArea);
+        Jumbotron.append(smallTextArea);
+        Jumbotron.append(smallTextArea2);
+        Jumbotron.append(smallTextArea3);
+        Jumbotron.append(smallTextArea4);
+        Jumbotron.append(smallTextArea5);
+        examViewer.append(Jumbotron);
+        examViewer.append(subButton);
     }
     const showFirstScreen = () => {
         document.getElementById("mainPageContainer").style.display = "block";
@@ -184,8 +281,7 @@ const UIHelper = (() => {
             }
             document.getElementById("smallButton").innerText = BUTTON_TEXT;
             examViewer.innerHTML = "";
-            console.log(Exams);
-            if (typeof Exams !== "object") {
+            if(Exams === null || Exams === undefined){
                 let Jumbotron = document.createElement("div");
                 Jumbotron.classList.add("jumbotron");
                 Jumbotron.classList.add('bg-light');
@@ -200,21 +296,20 @@ const UIHelper = (() => {
                 examViewer.append(Jumbotron);
             }
             else {
+                Exams = Object.values(Exams);
                 let layoutGrid = document.createElement("div");
                 layoutGrid.classList.add("row");
-                layoutGrid.classList.add("row-cols-3");
+                layoutGrid.classList.add("row-cols-1");
                 layoutGrid.classList.add("justify-content-between");
-                Exams = Object.values(Exams);
-                console.log(Exams);
                 Exams.forEach(Exam => {
                     database.ref("/exams/" + Exam).once("value").then((snapshot) => {
                             let examData = snapshot.val();
                             let examCard = document.createElement("div");
                             examCard.classList.add("card");
                             examCard.classList.add("bg-white");
-                            examCard.classList.add("m-5");
+                            examCard.classList.add("m-2");
                             examCard.classList.add("col");
-                            examCard.style.textAlign = 'center';
+                            examCard.classList.add("mr-4");
                             let cardBody = document.createElement("div");
                             cardBody.classList.add("card-body");
                             let subjectName = document.createElement("h5");
@@ -226,10 +321,19 @@ const UIHelper = (() => {
                             let examDesc = document.createElement("p");
                             examDesc.classList.add("card-text");
                             examDesc.innerText = examData.description;
+                            let examToken = document.createElement("p");
+                            examToken.classList.add("card-text");
+                            examToken.classList.add("lead");
+                            examToken.innerText = "Exam Token: " + Exam;
                             cardBody.append(subjectName);
                             cardBody.append(examName);
                             cardBody.append(examDesc);
+                            cardBody.append(examToken);
                             examCard.append(cardBody);
+                            console.log(examCard);
+                            examCard.addEventListener("click" , () => {
+                                examCardClick(examData, Exam);
+                            });
                             layoutGrid.append(examCard);
                     });
                 });
@@ -262,6 +366,7 @@ const UIHelper = (() => {
         document.getElementById("about").style.display = "none";
         document.getElementById("newExamForm").style.display = "none";
         document.getElementById("examViewer").style.display = "block";
+        showFirstScreen();
     }
     const createMCQEntries = (id) => {
         let mcqRow1 = document.createElement("div");

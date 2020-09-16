@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+    <head>
+        <title></title>
+        <meta name="description" content="">
+        <link rel="stylesheet" href="../lib/css/bootstrap.min.css">
+        <script defer src="exam_page.js"></script>
+        <style>
+            #startExamButton {
+                background-color: rgb(126, 38, 118);
+            }
+            #starExamButton:hover{
+                background-color: rgb(90, 20, 84);;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container-fluid bg-light" style="text-align: center; height: 100vh;">
+            <div class="jumbotron bg-light">
+                <h1 class="display-4" id="courseTitle"></h1>
+                <p class="lead" id="examTitle"></p>
+                <p class="lead" id="examDescreption"></p>
+                <p class="lead" id="examDuration"></p>
+                <ul id="policies-list" style="text-align: left;">
+                    <li id="minimization"></li>
+                    <li id="screenSize"></li>
+                    <li id="audioDetection"></li>
+                    <li id="facialDetection"></li>
+                    <li id="objectDetection"></li>
+                    <li id="headPoseDetection"></li>
+                    <li id="automaticFailure"></li>
+                </ul>
+            </div>
+            <button class="btn btn-lg btn-block sign-in-buttons text-light" id="startExamButton">Start Exam!</button>
+        </div>
+    </body>
+</html>
