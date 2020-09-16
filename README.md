@@ -5,7 +5,7 @@ This application is build on electronJS, and is a work in progress.
 # Installation  
 
 # Precompiled Binaries
-Download the .exe file for windows from ./dist/
+Download and launch the application from '/dist/'
 
 # Build from source.  
 To build this application from source, pull/clone this repo and do the following:  
