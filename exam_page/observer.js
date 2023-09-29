@@ -2,8 +2,8 @@ const { ipcRenderer } = require("electron");
 let cheatingattempts = 0;
 let examPolicies;
 let imageDetector;
-const AMAZON_REGION = 'us-east-1';
-const AMAZON_IDENTITYPOOLID = 'us-east-1:440300b8-83f5-414b-8f37-535823a58e9b';
+const AMAZON_REGION = 'YOUR-REGION-HERE';
+const AMAZON_IDENTITYPOOLID = 'YOUR-KEY-HERE';
 let headPoseValues = null;
 
 startup();
